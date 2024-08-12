@@ -1,0 +1,79 @@
+#file: noinspection YAMLSchemaValidation
+
+###################################
+#
+# Templates
+#
+###################################
+
+# Variables
+
+.global_variables: &global_variables
+  variables:
+    NODE_IMAGE: "node:18.17.1"
+
+
+# Stages
+
+stages:
+  - Install Dependencies
+  - Test Code
+  - Visual Regression Test
+  - Build Packages
+  - Build Docker Images
+  - Deploy Docker Images
+  - Publish Packages
+
+###################################
+#
+# General
+#
+###################################
+
+##
+# Building
+##
+
+Install node dependencies:
+  <<: [ *global_variables ]
+  image: $NODE_IMAGE
+  stage: Install Dependencies
+  artifacts:
+    paths:
+      - ./node_modules
+    name: $CI_COMMIT_BRANCH-dspace-relaunch
+    expire_in: 2 days
+  script:
+    - rm package-lock.json
+    - npm install
+  allow_failure: false
+
+Lint code:
+  <<: [ *global_variables ]
+  image: $NODE_IMAGE
+  stage: Test Code
+  script:
+    - npm run lint
+  allow_failure: false
+  needs:
+    - Install node dependencies
+
+Test code:
+  <<: [ *global_variables ]
+  image: $NODE_IMAGE
+  stage: Test Code
+  script:
+    - npm run test
+  allow_failure: false
+  needs:
+    - Install node dependencies
+
+Run app:
+  <<: [ *global_variables ]
+  image: $NODE_IMAGE
+  stage: Test Code
+  script:
+    - npm run app
+  allow_failure: false
+  needs:
+    - Install node dependencies
