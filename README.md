@@ -44,7 +44,7 @@ and create a merge request.
 
 ## Rules
 
-- Code adheres to clean code guidelines
+- Code adheres to [clean code](https://de.wikipedia.org/wiki/Clean_Code) guidelines
 - Code adheres to
   polargold [TypeScript Guidelines](https://polargold.atlassian.net/wiki/external/MjdkMmQ5MGM1ZmVlNGFjMWJiNGFmZmVkYzM5ZTljNjY)
 - The unit tests must run successfully
