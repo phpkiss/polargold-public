@@ -1,7 +1,6 @@
 import type { GenericSeminarItem, SeminarItemPayload } from "../types";
 import { LectureTypeId } from "../constants";
 
-// If you mess with this, you will fail the challenge
 export const RAW_SEMINAR_ITEMS: SeminarItemPayload[] = [
   {
     title: "Mein erstes Seminar",
@@ -13,7 +12,6 @@ export const RAW_SEMINAR_ITEMS: SeminarItemPayload[] = [
     metaDescription: null,
     speakerId: 1
   },
-
   {
     title: "Mein zweites Seminar",
     lectureTypeId: LectureTypeId.ONLINE_SEMINAR,
@@ -24,7 +22,6 @@ export const RAW_SEMINAR_ITEMS: SeminarItemPayload[] = [
     metaDescription: "Sogar eine Meta-Beschreibung",
     speakerId: 2
   },
-
   {
     title: "Mein drittes Seminar",
     lectureTypeId: LectureTypeId.PRESENCE_SEMINAR,

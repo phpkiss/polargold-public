@@ -1,21 +1,39 @@
-import { SeminarService } from "./classes/SeminarService";
-import { CONVERTED_SEMINAR_ITEMS, RAW_SEMINAR_ITEMS } from "./testData";
-import { SeminarSerializer } from "./classes/SeminarSerializer";
+import { SeminarService } from "./services/SeminarService";
+import { CONVERTED_SEMINAR_ITEMS, RAW_SEMINAR_ITEMS } from "./testData/index";
+import { AddressRepository, LectureTypeRepository, SpeakerRepository, SeminarRepository } from "./repositories";
+import { DatabaseConnection } from "./utils/DatabaseConnection";
+import { DatabaseSeeder } from "./seeders/DatabaseSeeder";
 
-// If you mess with this, you will fail the challenge
 describe("Conversion tests", () => {
-  test("Correct seminar item conversion (single)", () => {
-    const convertedSeminar = new SeminarService(RAW_SEMINAR_ITEMS[0]);
+  let seminarService: SeminarService;
+  let db: DatabaseConnection;
 
-    expect(convertedSeminar.createSeminar()).toStrictEqual(CONVERTED_SEMINAR_ITEMS[0]);
+  beforeAll(async () => {
+    db = await DatabaseConnection.getInstance();
+    
+    const seeder = new DatabaseSeeder(db);
+    await seeder.seed();
+
+    const addressRepository = new AddressRepository(db);
+    const lectureTypeRepository = new LectureTypeRepository(db);
+    const speakerRepository = new SpeakerRepository(db);
+    const seminarRepository = new SeminarRepository(db);
+
+    seminarService = new SeminarService(
+      seminarRepository,
+      addressRepository,
+      lectureTypeRepository,
+      speakerRepository
+    );
   });
 
-
-  test("Correct seminar item conversion (multiple)", () => {
-    const convertedSeminars = new SeminarSerializer(RAW_SEMINAR_ITEMS);
-
-    expect(convertedSeminars.convertedSeminarItems).toStrictEqual(CONVERTED_SEMINAR_ITEMS);
+  test("Correct seminar item conversion (single)", async () => {
+    const convertedSeminar = await seminarService.convertSeminar(RAW_SEMINAR_ITEMS[0]);
+    expect(convertedSeminar).toStrictEqual(CONVERTED_SEMINAR_ITEMS[0]);
   });
 
+  test("Correct seminar item conversion (multiple)", async () => {
+    const convertedSeminars = await seminarService.convertAllSeminars();
+    expect(convertedSeminars).toStrictEqual(CONVERTED_SEMINAR_ITEMS);
+  });
 });
-

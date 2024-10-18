@@ -34,7 +34,6 @@ export interface SeminarLectureType {
   displayName: SeminarLectureTypeDisplayName
 }
 
-
 export interface GenericSeminarItem {
   title: string;
   lectureType: SeminarLectureType;

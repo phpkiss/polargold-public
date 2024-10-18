@@ -1,11 +1,29 @@
-import { SeminarSerializer } from "./classes/SeminarSerializer";
-import { RAW_SEMINAR_ITEMS } from "./testData";
-import util from "util";
+import { DatabaseConnection } from './utils/DatabaseConnection';
+import { DatabaseSeeder } from './seeders/DatabaseSeeder';
+import { AddressRepository, LectureTypeRepository, SpeakerRepository, SeminarRepository } from './repositories';
+import { SeminarService } from './services/SeminarService';
 
-const convertedSeminars: SeminarSerializer = new SeminarSerializer(RAW_SEMINAR_ITEMS);
+async function main() {
+  const db = await DatabaseConnection.getInstance();
+  
+  const seeder = new DatabaseSeeder(db);
+  await seeder.seed();
 
-console.log(util.inspect(convertedSeminars.convertedSeminarItems, {
-  showHidden: false,
-  depth: 4,
-  colors: true
-}));
+  const addressRepository = new AddressRepository(db);
+  const lectureTypeRepository = new LectureTypeRepository(db);
+  const speakerRepository = new SpeakerRepository(db);
+  const seminarRepository = new SeminarRepository(db);
+
+  const seminarService = new SeminarService(
+    seminarRepository,
+    addressRepository,
+    lectureTypeRepository,
+    speakerRepository
+  );
+
+  const convertedSeminars = await seminarService.convertAllSeminars();
+
+  console.log(JSON.stringify(convertedSeminars, null, 2));
+}
+
+main().catch(console.error);
